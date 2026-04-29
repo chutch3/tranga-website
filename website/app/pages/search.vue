@@ -10,11 +10,11 @@
                             <UButton
                                 v-for="c in connectors"
                                 :key="c.key"
-                                :color="connector?.key == c.key ? 'secondary' : 'neutral'"
+                                :color="selectedConnector?.key == c.key ? 'secondary' : 'neutral'"
                                 :disabled="busy"
                                 @click="connectorClick(c)">
                                 <template #leading>
-                                    <NuxtImg :src="c.iconUrl" class="h-lh" />
+                                    <FallbackImage :src="c.iconUrl" :alt="`${c.name} icon`" class="h-lh" />
                                 </template>
                                 {{ c.name }}
                             </UButton>
@@ -49,7 +49,10 @@ type MinimalManga = components['schemas']['MinimalManga'];
 const { data: connectors } = await useApi('/v2/MangaConnector', { key: FetchKeys.MangaConnector.All, server: false });
 
 const query = ref<string>();
-const connector = useState<MangaConnector>();
+const connector = useState<MangaConnector | undefined>('search-connector', () => undefined);
+const selectedConnector = computed(
+    () => connector.value ?? connectors.value?.find((c) => c.name === 'Global') ?? connectors.value?.find((c) => c.enabled)
+);
 const activeStep = ref(0);
 const busy = ref<boolean>(false);
 watch(query, (v) => {
@@ -95,9 +98,9 @@ const search = async (query: string): Promise<MinimalManga[]> => {
             connector.value = connectors.value!.find((c) => c.name == data.value!.mangaConnectorIds[0]!.mangaConnectorName)!;
             return [data.value];
         } else return Promise.reject();
-    } else if (connector.value.name) {
+    } else if (selectedConnector.value?.name) {
         const { data } = await useApi('/v2/Search/{MangaConnectorName}/{Query}', {
-            path: { MangaConnectorName: connector.value.name, Query: query },
+            path: { MangaConnectorName: selectedConnector.value.name, Query: query },
             method: 'GET',
         });
         if (data.value) return data.value;
