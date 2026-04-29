@@ -14,8 +14,9 @@
                 {{ manga?.name }}
             </p>
         </div>
-        <LazyNuxtImg
-            :src="`${$config.public.openFetch.api.baseURL}v2/Manga/${manga.key}/Cover/Medium`"
+        <FallbackImage
+            :src="coverUrl"
+            :alt="`${manga.name} cover`"
             class="w-full h-full object-cover" />
     </div>
 </template>
@@ -25,5 +26,7 @@ import type { components } from '#open-fetch-schemas/api';
 type Manga = components['schemas']['Manga'];
 type MinimalManga = components['schemas']['MinimalManga'];
 
-defineProps<{ manga: Manga | MinimalManga; blur?: boolean }>();
+const props = defineProps<{ manga: Manga | MinimalManga; blur?: boolean }>();
+const config = useRuntimeConfig();
+const coverUrl = computed(() => `${config.public.openFetch.api.baseURL}v2/Manga/${props.manga.key}/Cover/Medium`);
 </script>

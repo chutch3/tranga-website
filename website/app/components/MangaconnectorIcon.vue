@@ -2,9 +2,10 @@
     <div class="w-6 h-6 inline-block align-middle m-1">
         <NuxtLink :href="props.websiteUrl ?? ''" target="_blank" external no-prefetch>
             <UTooltip :text="`${props.useForDownload ? 'Downloading' : 'Not downloading'}, click to see website`">
-                <NuxtImg
+                <FallbackImage
                     v-if="mangaConnector"
                     :src="mangaConnector?.iconUrl"
+                    :alt="`${mangaConnector.name} icon`"
                     :class="[
                         'w-full rounded-full outline-2 -outline-offset-1',
                         props.useForDownload ? 'outline-green-500' : 'outline-red-500',

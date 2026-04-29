@@ -4,7 +4,7 @@
             <USkeleton v-if="status === 'pending'" class="w-full h-14" />
             <UCard v-for="data in searchData" v-else :key="data.identifier">
                 <div class="grid grid-cols-[var(--mangacover-width)_auto] grid-flow-col gap-4">
-                    <NuxtImg
+                    <FallbackImage
                         :src="data.coverUrl ?? '/blahaj.png'"
                         alt="cover"
                         class="row-span-3 object-contain max-sm:w-[calc(var(--mangacover-width)/2)] max-sm:h-[calc(var(--mangacover-height)/2)] w-(--mangacover-width) h-(--mangacover-height) rounded-lg overflow-clip" />
