@@ -57,6 +57,7 @@
 
 <script setup lang="ts">
 import MangaDetailPage from '~/components/MangaDetailPage.vue';
+import type { components } from '#open-fetch-schemas/api';
 const { $api } = useNuxtApp();
 const route = useRoute();
 const mangaId = route.params.mangaId as string;
@@ -65,29 +66,35 @@ const connectorMangaId = route.query.connectorMangaId as string | undefined;
 
 const flashDownloading = route.hash.substring(1) == 'download';
 
-const isSearchResult = computed(() => !!connectorName && !!connectorMangaId);
+const isSearchResult = !!(connectorName && connectorMangaId);
 
-const { data: manga } = isSearchResult.value
-    ? await useApi('/v2/Search/{MangaConnectorName}/Manga/{ConnectorMangaId}', {
-          path: { MangaConnectorName: connectorName!, ConnectorMangaId: connectorMangaId! },
-          key: FetchKeys.Manga.Id(mangaId),
-          onResponseError: (e) => {
-              console.error(e);
-              navigateTo('/');
-          },
-          lazy: true,
-          server: false,
-      })
-    : await useApi('/v2/Manga/{MangaId}', {
-          path: { MangaId: mangaId },
-          key: FetchKeys.Manga.Id(mangaId),
-          onResponseError: (e) => {
-              console.error(e);
-              navigateTo('/');
-          },
-          lazy: true,
-          server: false,
-      });
+const manga = ref<components['schemas']['Manga'] | null>(null);
+
+if (process.client) {
+    const fetcher = isSearchResult
+        ? useApi('/v2/Search/{MangaConnectorName}/Manga/{ConnectorMangaId}', {
+              path: { MangaConnectorName: connectorName!, ConnectorMangaId: connectorMangaId! },
+              key: FetchKeys.Manga.Id(mangaId),
+              onResponseError: (e) => {
+                  console.error(e);
+                  navigateTo('/');
+              },
+              lazy: true,
+              server: false,
+          })
+        : useApi('/v2/Manga/{MangaId}', {
+              path: { MangaId: mangaId },
+              key: FetchKeys.Manga.Id(mangaId),
+              onResponseError: (e) => {
+                  console.error(e);
+                  navigateTo('/');
+              },
+              lazy: true,
+              server: false,
+          });
+    const { data } = await fetcher;
+    watch(data, (v) => { manga.value = v ?? null; }, { immediate: true });
+}
 
 const setRequestedFrom = async (MangaConnectorName: string, IsRequested: boolean) => {
     await $api('/v2/Manga/{MangaId}/DownloadFrom/{MangaConnectorName}/{IsRequested}', {
