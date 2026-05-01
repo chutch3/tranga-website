@@ -28,5 +28,9 @@ type MinimalManga = components['schemas']['MinimalManga'];
 
 const props = defineProps<{ manga: Manga | MinimalManga; blur?: boolean }>();
 const config = useRuntimeConfig();
-const coverUrl = computed(() => `${config.public.openFetch.api.baseURL}v2/Manga/${props.manga.key}/Cover/Medium`);
+const coverUrl = computed(() => {
+    const m = props.manga as Manga;
+    if (m.coverUrl && m.coverUrl.length > 0) return m.coverUrl;
+    return `${config.public.openFetch.api.baseURL}v2/Manga/${props.manga.key}/Cover/Medium`;
+});
 </script>

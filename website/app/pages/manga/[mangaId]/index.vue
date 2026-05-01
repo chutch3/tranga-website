@@ -1,7 +1,7 @@
 <template>
     <MangaDetailPage :manga="manga">
         <div class="grid gap-3 max-xl:grid-flow-row-dense min-2xl:grid-cols-[70%_auto] min-xl:grid-cols-[60%_auto] relative min-xl:h-full">
-            <ChaptersList :manga-id="mangaId" class="min-xl:h-full min-xl:overflow-y-scroll" />
+            <ChaptersList v-if="!isSearchResult" :manga-id="mangaId" class="min-xl:h-full min-xl:overflow-y-scroll" />
             <div class="flex flex-col gap-2">
                 <UCard :class="[flashDownloading ? 'animate-[flash_0.75s_ease_0.5s]' : '']">
                     <template #header>
@@ -12,7 +12,7 @@
                         :library-id="manga?.fileLibraryId"
                         class="w-full"
                         @library-changed="refreshNuxtData(FetchKeys.Manga.Id(mangaId))" />
-                    <div v-if="manga" class="flex flex-row gap-2 w-full flex-wrap my-2 justify-between">
+                    <div v-if="manga && !isSearchResult" class="flex flex-row gap-2 w-full flex-wrap my-2 justify-between">
                         <div
                             v-for="mangaconnectorId in manga.mangaConnectorIds.sort((a, b) =>
                                 a.mangaConnectorName < b.mangaConnectorName ? -1 : 1
@@ -33,22 +33,24 @@
                         </div>
                     </div>
                 </UCard>
-                <MangaMetadataFetcherTable :manga-id="mangaId" />
+                <MangaMetadataFetcherTable v-if="!isSearchResult" :manga-id="mangaId" />
             </div>
         </div>
         <template #actions>
-            <UButton
-                icon="i-lucide-brick-wall-shield"
-                :to="`/actions?mangaId=${mangaId}&return=${$route.fullPath}`"
-                variant="soft"
-                color="secondary" />
-            <UButton trailing-icon="i-lucide-merge" :to="`/manga/${manga?.key}/merge?return=${$route.fullPath}`" color="secondary"
-                >Merge</UButton
-            >
-            <UButton variant="soft" color="warning" icon="i-lucide-trash" @click="remove" />
-            <UTooltip text="Reload" :kbds="['meta', 'R']">
-                <UButton variant="soft" color="secondary" icon="i-lucide-refresh-ccw" :loading="refreshingData" @click="refreshData" />
-            </UTooltip>
+            <template v-if="!isSearchResult">
+                <UButton
+                    icon="i-lucide-brick-wall-shield"
+                    :to="`/actions?mangaId=${mangaId}&return=${$route.fullPath}`"
+                    variant="soft"
+                    color="secondary" />
+                <UButton trailing-icon="i-lucide-merge" :to="`/manga/${manga?.key}/merge?return=${$route.fullPath}`" color="secondary"
+                    >Merge</UButton
+                >
+                <UButton variant="soft" color="warning" icon="i-lucide-trash" @click="remove" />
+                <UTooltip text="Reload" :kbds="['meta', 'R']">
+                    <UButton variant="soft" color="secondary" icon="i-lucide-refresh-ccw" :loading="refreshingData" @click="refreshData" />
+                </UTooltip>
+            </template>
         </template>
     </MangaDetailPage>
 </template>
@@ -58,19 +60,34 @@ import MangaDetailPage from '~/components/MangaDetailPage.vue';
 const { $api } = useNuxtApp();
 const route = useRoute();
 const mangaId = route.params.mangaId as string;
+const connectorName = route.query.connectorName as string | undefined;
+const connectorMangaId = route.query.connectorMangaId as string | undefined;
 
 const flashDownloading = route.hash.substring(1) == 'download';
 
-const { data: manga } = await useApi('/v2/Manga/{MangaId}', {
-    path: { MangaId: mangaId },
-    key: FetchKeys.Manga.Id(mangaId),
-    onResponseError: (e) => {
-        console.error(e);
-        navigateTo('/');
-    },
-    lazy: true,
-    server: false,
-});
+const isSearchResult = computed(() => !!connectorName && !!connectorMangaId);
+
+const { data: manga } = isSearchResult.value
+    ? await useApi('/v2/Search/{MangaConnectorName}/Manga/{ConnectorMangaId}', {
+          path: { MangaConnectorName: connectorName!, ConnectorMangaId: connectorMangaId! },
+          key: FetchKeys.Manga.Id(mangaId),
+          onResponseError: (e) => {
+              console.error(e);
+              navigateTo('/');
+          },
+          lazy: true,
+          server: false,
+      })
+    : await useApi('/v2/Manga/{MangaId}', {
+          path: { MangaId: mangaId },
+          key: FetchKeys.Manga.Id(mangaId),
+          onResponseError: (e) => {
+              console.error(e);
+              navigateTo('/');
+          },
+          lazy: true,
+          server: false,
+      });
 
 const setRequestedFrom = async (MangaConnectorName: string, IsRequested: boolean) => {
     await $api('/v2/Manga/{MangaId}/DownloadFrom/{MangaConnectorName}/{IsRequested}', {

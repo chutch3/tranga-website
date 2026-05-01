@@ -36,7 +36,7 @@
         <MangaCardList
             :manga="searchResult"
             class="overflow-y-scroll h-full pb-70"
-            @click="(m) => navigateTo(`/manga/${m.key}?return=${$route.fullPath}#download`)" />
+            @click="(m) => navigateTo(`/manga/${m.key}?return=${$route.fullPath}&connectorName=${m.mangaConnectorIds[0]?.mangaConnectorName}&connectorMangaId=${m.mangaConnectorIds[0]?.objId}#download`)" />
     </TrangaPage>
 </template>
 
