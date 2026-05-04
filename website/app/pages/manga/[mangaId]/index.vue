@@ -1,7 +1,7 @@
 <template>
     <MangaDetailPage :manga="manga">
         <div class="grid gap-3 max-xl:grid-flow-row-dense min-2xl:grid-cols-[70%_auto] min-xl:grid-cols-[60%_auto] relative min-xl:h-full">
-            <ChaptersList v-if="!isSearchResult" :manga-id="mangaId" class="min-xl:h-full min-xl:overflow-y-scroll" />
+            <ChaptersList v-if="!isSearchResult || (manga && manga.fileLibraryId)" :manga-id="mangaId" class="min-xl:h-full min-xl:overflow-y-scroll" />
             <div class="flex flex-col gap-2">
                 <UCard :class="[flashDownloading ? 'animate-[flash_0.75s_ease_0.5s]' : '']">
                     <template #header>
@@ -12,7 +12,7 @@
                         :library-id="manga?.fileLibraryId"
                         class="w-full"
                         @library-changed="refreshNuxtData(FetchKeys.Manga.Id(mangaId))" />
-                    <div v-if="manga && !isSearchResult" class="flex flex-row gap-2 w-full flex-wrap my-2 justify-between">
+                    <div v-if="manga && (!isSearchResult || manga.fileLibraryId)" class="flex flex-row gap-2 w-full flex-wrap my-2 justify-between">
                         <div
                             v-for="mangaconnectorId in manga.mangaConnectorIds.sort((a, b) =>
                                 a.mangaConnectorName < b.mangaConnectorName ? -1 : 1
@@ -33,11 +33,11 @@
                         </div>
                     </div>
                 </UCard>
-                <MangaMetadataFetcherTable v-if="!isSearchResult" :manga-id="mangaId" />
+                <MangaMetadataFetcherTable v-if="!isSearchResult || (manga && manga.fileLibraryId)" :manga-id="mangaId" />
             </div>
         </div>
         <template #actions>
-            <template v-if="!isSearchResult">
+            <template v-if="!isSearchResult || (manga && manga.fileLibraryId)">
                 <UButton
                     icon="i-lucide-brick-wall-shield"
                     :to="`/actions?mangaId=${mangaId}&return=${$route.fullPath}`"

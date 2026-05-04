@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 const { $api } = useNuxtApp();
+const route = useRoute();
 
 export interface LibrarySelectProps {
     mangaId: string;
@@ -43,9 +44,14 @@ const loading = ref(false);
 const onLibrarySelectChange = async () => {
     if (!library.value) return;
     loading.value = true;
+
+    const connectorName = route.query.connectorName as string | undefined;
+    const connectorMangaId = route.query.connectorMangaId as string | undefined;
+
     await $api('/v2/Manga/{MangaId}/ChangeLibrary/{LibraryId}', {
         method: 'POST',
         path: { MangaId: props.mangaId, LibraryId: library.value },
+        query: { connectorName, connectorMangaId },
     });
     await refreshNuxtData(FetchKeys.Manga.Id(props.mangaId));
     loading.value = false;
