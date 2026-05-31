@@ -1,7 +1,7 @@
 <template>
     <SeriesDetailPage :series="series" title="Merge with">
         <USkeleton v-if="!series" class="w-full h-[350px]" />
-        <SeriesCardList :series="series" @click="(m) => navigateTo(`/series/${mangaId}/merge/${m.key}?return=${$route.fullPath}`)" />
+        <SeriesCardList :series="allSeries" @click="(m) => navigateTo(`/series/${mangaId}/merge/${m.key}?return=${$route.fullPath}`)" />
     </SeriesDetailPage>
 </template>
 
@@ -13,7 +13,7 @@ const { data: series } = await useApi('/v2/Series/{MangaId}', {
     key: FetchKeys.Series.Id(mangaId),
     server: false,
 });
-const { data: series } = await useApi('/v2/Series', { key: FetchKeys.Series.All, server: false });
+const { data: allSeries } = await useApi('/v2/Series', { key: FetchKeys.Series.All, server: false });
 
 useHead({ title: 'Merge Series' });
 </script>
