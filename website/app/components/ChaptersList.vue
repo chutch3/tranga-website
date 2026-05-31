@@ -65,7 +65,7 @@
                             <UIcon :name="chapter.downloaded ? 'i-lucide-cloud-check' : 'i-lucide-cloud-alert'" size="20" />
                         </UTooltip>
                         <div
-                            v-for="mangaconnectorId in chapter.mangaConnectorIds.sort((a, b) =>
+                            v-for="mangaconnectorId in chapter.sourceIds.sort((a, b) =>
                                 a.mangaConnectorName < b.mangaConnectorName ? -1 : 1
                             )"
                             :key="mangaconnectorId.key"

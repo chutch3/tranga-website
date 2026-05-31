@@ -36,7 +36,7 @@
         <SeriesCardList
             :series="searchResult"
             class="overflow-y-scroll h-full pb-70"
-            @click="(m) => navigateTo(`/series/${m.key}?return=${$route.fullPath}&connectorName=${m.mangaConnectorIds[0]?.mangaConnectorName}&connectorMangaId=${m.mangaConnectorIds[0]?.objId}#download`)" />
+            @click="(m) => navigateTo(`/series/${m.key}?return=${$route.fullPath}&connectorName=${m.sourceIds[0]?.mangaConnectorName}&connectorMangaId=${m.sourceIds[0]?.objId}#download`)" />
     </TrangaPage>
 </template>
 
@@ -95,7 +95,7 @@ const search = async (query: string): Promise<MinimalSeries[]> => {
     if (isUrl(query)) {
         const { data } = await useApi('/v2/Search', { query: { url: JSON.stringify(query) } });
         if (data.value) {
-            connector.value = connectors.value!.find((c) => c.name == data.value!.mangaConnectorIds[0]!.mangaConnectorName)!;
+            connector.value = connectors.value!.find((c) => c.name == data.value!.sourceIds[0]!.mangaConnectorName)!;
             return [data.value];
         } else return Promise.reject();
     } else if (selectedConnector.value?.name) {

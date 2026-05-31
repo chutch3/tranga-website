@@ -6,7 +6,7 @@
                 <USkeleton v-else class="w-[240px] h-[350px]" />
                 <p v-if="series" class="font-semibold text-xl">
                     {{ series.name }}
-                    <SourceIcon v-for="m in series.mangaConnectorIds" v-bind="m" :key="m.key" />
+                    <SourceIcon v-for="m in series.sourceIds" v-bind="m" :key="m.key" />
                 </p>
                 <USkeleton v-else as="p" class="h-20 w-full" />
                 <div v-if="series" class="flex flex-row gap-1 flex-wrap">

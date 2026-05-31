@@ -14,7 +14,7 @@
                         @library-changed="refreshNuxtData(FetchKeys.Series.Id(mangaId))" />
                     <div v-if="series && (!isSearchResult || series.fileLibraryId)" class="flex flex-row gap-2 w-full flex-wrap my-2 justify-between">
                         <div
-                            v-for="mangaconnectorId in series.mangaConnectorIds.sort((a, b) =>
+                            v-for="mangaconnectorId in series.sourceIds.sort((a, b) =>
                                 a.mangaConnectorName < b.mangaConnectorName ? -1 : 1
                             )"
                             :key="mangaconnectorId.key"
