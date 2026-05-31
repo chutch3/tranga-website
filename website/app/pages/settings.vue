@@ -50,6 +50,40 @@
             </UCard>
             <UCard v-if="settingsStatus === 'success'">
                 <template #header>
+                    <h1>Comics &amp; Torrents</h1>
+                </template>
+                <p class="text-dimmed text-sm">
+                    Configure an indexer source (Prowlarr) and a torrent client to download comics, plus Metron for
+                    comic metadata. Leave these empty to keep Tranga manga-only.
+                </p>
+                <template #footer>
+                    <div class="flex flex-row gap-2 flex-wrap">
+                        <UTooltip :text="prowlarrConnected ? 'Disconnect Prowlarr' : 'Connect Prowlarr'">
+                            <UButton
+                                :icon="prowlarrConnected ? 'i-lucide-unlink' : 'i-lucide-link'"
+                                class="w-fit"
+                                label="Prowlarr"
+                                @click="onProwlarrClick" />
+                        </UTooltip>
+                        <UTooltip :text="torrentClientConnected ? 'Disconnect Torrent Client' : 'Connect Torrent Client'">
+                            <UButton
+                                :icon="torrentClientConnected ? 'i-lucide-unlink' : 'i-lucide-link'"
+                                class="w-fit"
+                                label="Torrent Client"
+                                @click="onTorrentClientClick" />
+                        </UTooltip>
+                        <UTooltip :text="metronConnected ? 'Disconnect Metron' : 'Connect Metron'">
+                            <UButton
+                                :icon="metronConnected ? 'i-lucide-unlink' : 'i-lucide-link'"
+                                class="w-fit"
+                                label="Metron"
+                                @click="onMetronClick" />
+                        </UTooltip>
+                    </div>
+                </template>
+            </UCard>
+            <UCard v-if="settingsStatus === 'success'">
+                <template #header>
                     <h1>Maintenance</h1>
                 </template>
                 <div class="flex gap-2">
@@ -80,6 +114,9 @@ import {
     LazyKomgaModal,
     LazyNtfyModal,
     LazyPushoverModal,
+    LazyMetronModal,
+    LazyProwlarrModal,
+    LazyTorrentClientModal,
 } from '#components';
 import FileLibraries from '~/components/FileLibraries.vue';
 import { refreshNuxtData } from '#app';
@@ -94,6 +131,9 @@ const addGotifyModal = overlay.create(LazyGotifyModal);
 const addNtfyModal = overlay.create(LazyNtfyModal);
 const addPushoverModal = overlay.create(LazyPushoverModal);
 const addGenericConnectorModal = overlay.create(LazyGenericNotificationConnectorModal);
+const prowlarrModal = overlay.create(LazyProwlarrModal);
+const torrentClientModal = overlay.create(LazyTorrentClientModal);
+const metronModal = overlay.create(LazyMetronModal);
 
 const cleanUpDatabase = async () => {
     await useApi('/v2/Maintenance/CleanupNoDownloadManga', { method: 'POST' });
@@ -129,7 +169,29 @@ const onKavitaClick = async () => {
     }
 };
 
-const { status: settingsStatus } = useApi('/v2/Settings', { key: FetchKeys.Settings.All, server: false });
+const { data: settingsData, status: settingsStatus } = useApi('/v2/Settings', { key: FetchKeys.Settings.All, server: false });
+
+// Configured-ness is derived from the non-secret settings fields (the *Configured booleans are
+// server-side only / not serialised). Connecting opens a modal; disconnecting clears via DELETE.
+const prowlarrConnected = computed(() => !!settingsData.value?.prowlarrBaseUrl);
+const torrentClientConnected = computed(() => !!settingsData.value?.torrentClientBaseUrl);
+const metronConnected = computed(() => !!settingsData.value?.metronUsername);
+
+const onProwlarrClick = async () => {
+    if (!prowlarrConnected.value) { prowlarrModal.open(); return; }
+    await $api('/v2/Settings/Prowlarr', { method: 'DELETE' });
+    await refreshNuxtData(FetchKeys.Settings.All);
+};
+const onTorrentClientClick = async () => {
+    if (!torrentClientConnected.value) { torrentClientModal.open(); return; }
+    await $api('/v2/Settings/TorrentClient', { method: 'DELETE' });
+    await refreshNuxtData(FetchKeys.Settings.All);
+};
+const onMetronClick = async () => {
+    if (!metronConnected.value) { metronModal.open(); return; }
+    await $api('/v2/Settings/Metron', { method: 'DELETE' });
+    await refreshNuxtData(FetchKeys.Settings.All);
+};
 
 const { data: stats } = useApi('/v2/Stats', { server: false });
 const deCamel = (camel: string): string =>
