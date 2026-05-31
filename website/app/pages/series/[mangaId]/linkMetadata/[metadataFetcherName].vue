@@ -1,5 +1,5 @@
 <template>
-    <MangaDetailPage :manga="manga" :title="metadataFetcherName">
+    <SeriesDetailPage :series="series" :title="metadataFetcherName">
         <div class="flex flex-col flex-wrap gap-2">
             <USkeleton v-if="status === 'pending'" class="w-full h-14" />
             <UCard v-for="data in searchData" v-else :key="data.identifier">
@@ -16,7 +16,7 @@
                 </div>
             </UCard>
         </div>
-    </MangaDetailPage>
+    </SeriesDetailPage>
 </template>
 
 <script setup lang="ts">
@@ -25,9 +25,9 @@ const mangaId = route.params.mangaId as string;
 const metadataFetcherName = route.params.metadataFetcherName as string;
 const { $api } = useNuxtApp();
 
-const { data: manga } = await useApi('/v2/Manga/{MangaId}', {
+const { data: series } = await useApi('/v2/Series/{MangaId}', {
     path: { MangaId: mangaId },
-    key: FetchKeys.Manga.Id(mangaId),
+    key: FetchKeys.Series.Id(mangaId),
     onResponseError: (e) => {
         console.error(e);
         navigateTo('/');
@@ -47,8 +47,8 @@ const link = async (identifier: string) => {
         path: { MangaId: mangaId, MetadataFetcherName: metadataFetcherName },
         body: identifier,
     });
-    await refreshNuxtData(FetchKeys.Metadata.Manga(mangaId));
-    navigateTo(`/manga/${mangaId}`);
+    await refreshNuxtData(FetchKeys.Metadata.Series(mangaId));
+    navigateTo(`/series/${mangaId}`);
 };
 
 useHead({ title: 'Link Metadata' });

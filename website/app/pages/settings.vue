@@ -97,7 +97,7 @@ const addGenericConnectorModal = overlay.create(LazyGenericNotificationConnector
 
 const cleanUpDatabase = async () => {
     await useApi('/v2/Maintenance/CleanupNoDownloadManga', { method: 'POST' });
-    await refreshNuxtData(FetchKeys.Manga.All);
+    await refreshNuxtData(FetchKeys.Series.All);
 };
 const cleanUpActions = async () => {
     await useApi('/v2/Maintenance/CleanupActions', { method: 'POST' });

@@ -2,7 +2,7 @@
     <TrangaPage>
         <div class="flex flex-col items-center justify-center gap-10">
             <div class="flex flex-row max-sm:flex-col justify-evenly items-center">
-                <MangaCard v-if="manga" :manga="manga" :expanded="true" />
+                <SeriesCard v-if="series" :series="series" :expanded="true" />
                 <USkeleton v-else class="max-w-[600px] w-full h-[350px]" />
                 <UButton
                     icon="i-lucide-merge"
@@ -15,7 +15,7 @@
                     variant="soft"
                     color="primary"
                     @click="reverse = !reverse" />
-                <MangaCard v-if="target" :manga="target" :expanded="true" />
+                <SeriesCard v-if="target" :series="target" :expanded="true" />
                 <USkeleton v-else class="max-w-[600px] w-full h-[350px]" />
             </div>
             <p class="text-red-500 animate-pulse font-bold min-sm:text-3xl">This action is irreversible!</p>
@@ -31,22 +31,22 @@ const mangaId = route.params.mangaId as string;
 const { $api } = useNuxtApp();
 
 const reverse = ref(false);
-const { data: target } = await useApi('/v2/Manga/{MangaId}', {
+const { data: target } = await useApi('/v2/Series/{MangaId}', {
     path: { MangaId: targetId },
-    key: FetchKeys.Manga.Id(targetId),
+    key: FetchKeys.Series.Id(targetId),
     server: false,
 });
-const { data: manga } = await useApi('/v2/Manga/{MangaId}', {
+const { data: series } = await useApi('/v2/Series/{MangaId}', {
     path: { MangaId: mangaId },
-    key: FetchKeys.Manga.Id(mangaId),
+    key: FetchKeys.Series.Id(mangaId),
     server: false,
 });
 
 const merge = async () => {
     const from = reverse.value ? mangaId : targetId;
     const to = reverse.value == false ? targetId : mangaId;
-    await $api('/v2/Manga/{MangaIdFrom}/MergeInto/{MangaIdInto}', { method: 'POST', path: { MangaIdFrom: from, MangaIdInto: to } });
-    navigateTo(`/manga/${to}?return=${useRoute().fullPath}`);
+    await $api('/v2/Series/{MangaIdFrom}/MergeInto/{MangaIdInto}', { method: 'POST', path: { MangaIdFrom: from, MangaIdInto: to } });
+    navigateTo(`/series/${to}?return=${useRoute().fullPath}`);
 };
 
 useHead({ title: 'Confirm merge' });

@@ -27,7 +27,7 @@
                     </UTooltip>
                     <UButton
                         v-if="metadata.find((me) => me.metadataFetcherName === row.original) === undefined"
-                        :to="`/manga/${mangaId}/linkMetadata/${row.original}?return=${$route.fullPath}`"
+                        :to="`/series/${mangaId}/linkMetadata/${row.original}?return=${$route.fullPath}`"
                         loading-auto
                         icon="i-lucide-link" />
                 </div>
@@ -45,7 +45,7 @@ const { $api } = useNuxtApp();
 const { data: metadataFetchers } = await useApi('/v2/MetadataFetcher', { key: FetchKeys.Metadata.Fetchers, lazy: true, server: false });
 const { data: metadata } = await useApi('/v2/MetadataFetcher/Links/{MangaId}', {
     path: { MangaId: mangaId },
-    key: FetchKeys.Metadata.Manga(mangaId),
+    key: FetchKeys.Metadata.Series(mangaId),
     lazy: true,
     server: false,
 });
@@ -55,7 +55,7 @@ const unlinkMetadataFetcher = async (metadataFetcherName: string) => {
         method: 'POST',
         path: { MangaId: mangaId, MetadataFetcherName: metadataFetcherName },
     });
-    await refreshNuxtData(FetchKeys.Metadata.Manga(mangaId));
+    await refreshNuxtData(FetchKeys.Metadata.Series(mangaId));
 };
 
 const updateMetadata = async (metadataFetcherName: string) => {
@@ -63,6 +63,6 @@ const updateMetadata = async (metadataFetcherName: string) => {
         method: 'POST',
         path: { MangaId: mangaId, MetadataFetcherName: metadataFetcherName },
     });
-    await refreshNuxtData(FetchKeys.Manga.Id(mangaId));
+    await refreshNuxtData(FetchKeys.Series.Id(mangaId));
 };
 </script>

@@ -70,7 +70,7 @@
                             )"
                             :key="mangaconnectorId.key"
                             class="bg-elevated p-1 rounded-lg w-fit flex items-center justify-center gap-2">
-                            <MangaconnectorIcon v-bind="mangaconnectorId" />
+                            <SourceIcon v-bind="mangaconnectorId" />
                             <UTooltip
                                 :text="
                                     mangaconnectorId.useForDownload ? 'Stop downloading from this website' : 'Download from this website'
@@ -110,7 +110,7 @@ const { $api } = useNuxtApp();
 const { data, refresh } = useAsyncData(
     FetchKeys.Chapters.All,
     () =>
-        $api('/v2/Chapters/Manga/{MangaId}', {
+        $api('/v2/Chapters/Series/{MangaId}', {
             method: 'POST',
             query: { page: pagination.value.pageIndex + 1, pageSize: pagination.value.pageSize },
             path: { MangaId: props.mangaId },

@@ -2,9 +2,9 @@
     <UCard
         :ui="{ body: 'p-0 sm:p-0', root: 'overflow-visible' }"
         class="relative max-sm:w-[var(--mangacover-width-sm)] max-sm:h-[var(--mangacover-height-sm)] w-(--mangacover-width) h-(--mangacover-height) mt-4 mr-4">
-        <MangaCover :manga="manga" blur />
+        <SeriesCover :series="series" blur />
         <div class="absolute -top-4 -right-4 flex flex-col bg-pink rounded-full">
-            <MangaconnectorIcon v-for="m in manga.mangaConnectorIds" v-bind="m" :key="m.key" />
+            <SourceIcon v-for="m in series.mangaConnectorIds" v-bind="m" :key="m.key" />
         </div>
     </UCard>
 </template>
@@ -12,12 +12,12 @@
 <script setup lang="ts">
 import type { components } from '#open-fetch-schemas/api';
 import type { PageCardProps } from '#ui/components/PageCard.vue';
-type Manga = components['schemas']['Manga'];
-type MinimalManga = components['schemas']['MinimalManga'];
+type Series = components['schemas']['Series'];
+type MinimalSeries = components['schemas']['MinimalSeries'];
 
-defineProps<MangaCardProps>();
+defineProps<SeriesCardProps>();
 
-export interface MangaCardProps extends /* @vue-ignore */ PageCardProps {
-    manga: Manga | MinimalManga;
+export interface SeriesCardProps extends /* @vue-ignore */ PageCardProps {
+    series: Series | MinimalSeries;
 }
 </script>

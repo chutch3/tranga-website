@@ -1,10 +1,10 @@
 <template>
     <div
         class="grid min-sm:grid-cols-[repeat(auto-fill,_minmax(var(--mangacover-width),_1fr))] max-sm:grid-cols-[repeat(auto-fill,_minmax(var(--mangacover-width-sm),_1fr))] gap-4">
-        <MangaCard
-            v-for="(m, i) in manga"
+        <SeriesCard
+            v-for="(m, i) in series"
             :key="m.key"
-            :manga="m"
+            :series="m"
             :expanded="i === expanded"
             class="cursor-pointer"
             @click="$emit('click', m)" />
@@ -13,11 +13,11 @@
 
 <script setup lang="ts">
 import type { components } from '#open-fetch-schemas/api';
-type Manga = components['schemas']['Manga'];
-type MinimalManga = components['schemas']['MinimalManga'];
+type Series = components['schemas']['Series'];
+type MinimalSeries = components['schemas']['MinimalSeries'];
 
 const expanded = ref(-1);
 
-defineEmits<{ (e: 'click', manga: MinimalManga | Manga): void }>();
-defineProps<{ manga?: (MinimalManga | Manga)[] }>();
+defineEmits<{ (e: 'click', series: MinimalSeries | Series): void }>();
+defineProps<{ series?: (MinimalSeries | Series)[] }>();
 </script>

@@ -41,19 +41,19 @@
                 <template #timestamp-cell="{ row }">
                     {{ new Date(row.original.performedAt).toLocaleString() }}
                 </template>
-                <template #manga-cell="{ row }">
+                <template #series-cell="{ row }">
                     <UButton
                         v-if="row.original.mangaId"
-                        :to="`/manga/${row.original.mangaId}?return=${$route.fullPath}`"
+                        :to="`/series/${row.original.mangaId}?return=${$route.fullPath}`"
                         variant="ghost"
                         color="primary"
-                        >Manga</UButton
+                        >Series</UButton
                     >
                 </template>
                 <template #chapter-cell="{ row }">
                     <UButton
                         v-if="row.original.chapterId"
-                        :to="`/manga/${row.original.mangaId}?return=${$route.fullPath}#${row.original.chapterId}`"
+                        :to="`/series/${row.original.mangaId}?return=${$route.fullPath}#${row.original.chapterId}`"
                         variant="ghost"
                         color="secondary"
                         >Chapter</UButton
@@ -102,7 +102,7 @@ const { data: ActionTypes } = useApi('/v2/Actions/Types', { key: FetchKeys.Actio
 const columns: TableColumn<ActionRecord>[] = [
     { id: 'action', accessorKey: 'action', header: 'Action' },
     { id: 'timestamp', accessorKey: 'performedAt', header: 'Timestamp' },
-    { id: 'manga', accessorKey: 'mangaId', header: 'Manga' },
+    { id: 'series', accessorKey: 'mangaId', header: 'Series' },
     { id: 'chapter', accessorKey: 'chapterId', header: 'Chapter' },
     { id: 'additional', header: 'Additional' },
 ];

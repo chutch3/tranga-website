@@ -11,26 +11,26 @@
                 -webkit-backdrop-filter: blur(2px) brightness(70%);
             ">
             <p class="p-3 max-sm:text-sm text-xl font-semibold max-h-full overflow-clip text-shadow-lg text-white">
-                {{ manga?.name }}
+                {{ series?.name }}
             </p>
         </div>
         <FallbackImage
             :src="coverUrl"
-            :alt="`${manga.name} cover`"
+            :alt="`${series.name} cover`"
             class="w-full h-full object-cover" />
     </div>
 </template>
 
 <script setup lang="ts">
 import type { components } from '#open-fetch-schemas/api';
-type Manga = components['schemas']['Manga'];
-type MinimalManga = components['schemas']['MinimalManga'];
+type Series = components['schemas']['Series'];
+type MinimalSeries = components['schemas']['MinimalSeries'];
 
-const props = defineProps<{ manga: Manga | MinimalManga; blur?: boolean }>();
+const props = defineProps<{ series: Series | MinimalSeries; blur?: boolean }>();
 const config = useRuntimeConfig();
 const coverUrl = computed(() => {
-    const m = props.manga as Manga;
+    const m = props.series as Series;
     if (m.coverUrl && m.coverUrl.length > 0) return m.coverUrl;
-    return `${config.public.openFetch.api.baseURL}v2/Manga/${props.manga.key}/Cover/Medium`;
+    return `${config.public.openFetch.api.baseURL}v2/Series/${props.series.key}/Cover/Medium`;
 });
 </script>

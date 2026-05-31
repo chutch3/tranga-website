@@ -33,7 +33,7 @@
                     color="secondary" />
                 <UButton icon="i-lucide-plus" to="/search" color="primary">
                     <template #default>
-                        <span class="max-sm:hidden">Manga</span>
+                        <span class="max-sm:hidden">Series</span>
                     </template>
                 </UButton>
                 <UColorModeButton color="secondary" />

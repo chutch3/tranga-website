@@ -1,11 +1,11 @@
 <template>
     <LoadingPage :loading="status === 'pending'">
-        <MangaCardList :manga="manga" class="min-md:mx-4 max-md:mx-0 mt-2" @click="(m) => navigateTo(`/manga/${m.key}`)" />
+        <SeriesCardList :series="series" class="min-md:mx-4 max-md:mx-0 mt-2" @click="(m) => navigateTo(`/series/${m.key}`)" />
     </LoadingPage>
 </template>
 
 <script setup lang="ts">
-const { data: manga, refresh, status } = await useApi('/v2/Manga', { key: FetchKeys.Manga.All, lazy: true, server: false });
+const { data: series, refresh, status } = await useApi('/v2/Series', { key: FetchKeys.Series.All, lazy: true, server: false });
 onMounted(() => refresh());
 
 useHead({ title: 'Tranga' });

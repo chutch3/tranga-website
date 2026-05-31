@@ -33,20 +33,20 @@
                 </p>
             </template>
         </UPageSection>
-        <MangaCardList
-            :manga="searchResult"
+        <SeriesCardList
+            :series="searchResult"
             class="overflow-y-scroll h-full pb-70"
-            @click="(m) => navigateTo(`/manga/${m.key}?return=${$route.fullPath}&connectorName=${m.mangaConnectorIds[0]?.mangaConnectorName}&connectorMangaId=${m.mangaConnectorIds[0]?.objId}#download`)" />
+            @click="(m) => navigateTo(`/series/${m.key}?return=${$route.fullPath}&connectorName=${m.mangaConnectorIds[0]?.mangaConnectorName}&connectorMangaId=${m.mangaConnectorIds[0]?.objId}#download`)" />
     </TrangaPage>
 </template>
 
 <script setup lang="ts">
 import type { components } from '#open-fetch-schemas/api';
 import type { StepperItem } from '@nuxt/ui';
-type MangaConnector = components['schemas']['MangaConnector'];
-type MinimalManga = components['schemas']['MinimalManga'];
+type MangaConnector = components['schemas']['SeriesSource'];
+type MinimalSeries = components['schemas']['MinimalSeries'];
 
-const { data: connectors } = await useApi('/v2/MangaConnector', { key: FetchKeys.MangaConnector.All, server: false });
+const { data: connectors } = await useApi('/v2/SeriesSource', { key: FetchKeys.MangaConnector.All, server: false });
 
 const query = ref<string>();
 const connector = useState<MangaConnector | undefined>('search-connector', () => undefined);
@@ -74,7 +74,7 @@ const connectorClick = (c: MangaConnector) => {
     performSearch();
 };
 
-const searchResult = useState<MinimalManga[]>(() => []);
+const searchResult = useState<MinimalSeries[]>(() => []);
 const searchQuery = useState<string>(() => '');
 const performSearch = async () => {
     if (!query.value) return;
@@ -86,12 +86,12 @@ const performSearch = async () => {
             activeStep.value = 2;
         })
         .finally(() => {
-            refreshNuxtData(FetchKeys.Manga.All);
+            refreshNuxtData(FetchKeys.Series.All);
             busy.value = false;
         });
 };
 
-const search = async (query: string): Promise<MinimalManga[]> => {
+const search = async (query: string): Promise<MinimalSeries[]> => {
     if (isUrl(query)) {
         const { data } = await useApi('/v2/Search', { query: { url: JSON.stringify(query) } });
         if (data.value) {
@@ -114,5 +114,5 @@ const items = ref<StepperItem[]>([
     { title: 'Results', icon: 'i-lucide-logs' },
 ]);
 
-useHead({ title: 'Search Manga' });
+useHead({ title: 'Search Series' });
 </script>
